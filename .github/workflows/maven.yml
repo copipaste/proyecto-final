@@ -1,16 +1,8 @@
-# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
-
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
 name: Java CI with Maven
 
 on:
   push:
-    branches: 
+    branches:
       - main
       - "feature/**"
   pull_request:
@@ -18,55 +10,48 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 26
+    - name: 1. Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: 2. Set up JDK 21
       uses: actions/setup-java@v4
       with:
-        java-version: '26'
+        java-version: '21'
         distribution: 'temurin'
         cache: maven
 
-    - name: Build with Maven
-      ## Uncomment the following line to run build & tests
-      #run: mvn -B package --file pom.xml
-      ## Uncomment the following line to run build without tests option 1
-      run: mvn -B package --file pom.xml -DskipTests
-      ## Uncomment the following line to run build without test option 2
-      #run: ./mvnw --batch-mode compile
+    - name: 3. Compile Source Code
+      run: mvn -B compile --file pom.xml
 
-    - name: Run tests with Maven
-      #run: ./mvnw --batch-mode test
+    - name: 4. Run Unit Tests (JUnit)
       run: mvn -B test --file pom.xml
 
-    - name: Run Code Coverage with Maven
-      #run: ./mvnw --batch-mode test
-      run: mvn -B test jacoco:report --file pom.xml
+    - name: 5. Generate JaCoCo Coverage Report
+      run: mvn -B jacoco:report --file pom.xml
 
-    # Publicar JAR
-    - name: Publish JAR
+    - name: 6. Package Application JAR
+      run: mvn -B package -DskipTests --file pom.xml
+
+    - name: 7. Upload Application Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: webapi-artifact
-        path: target/*.jar
+        name: app-jar
+        path: target/app.jar
+        retention-days: 7
 
-    # Publicar Reporte de Pruebas
-    - name: Publish Test Report
+    - name: 8. Upload JaCoCo Coverage Report
       uses: actions/upload-artifact@v4
       with:
-        name: test-report-artifact
-        path: target/surefire-reports/
-
-    # Publicar Reporte de Cobertura
-    - name: Publish Code Coverage Report
-      uses: actions/upload-artifact@v4
-      with:
-        name: code-coverage-report-artifact
+        name: jacoco-coverage-report
         path: target/site/jacoco/
+        retention-days: 7
 
-    # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
-    #- name: Update dependency graph
-    #  uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
+    - name: 9. Upload Test Results
+      uses: actions/upload-artifact@v4
+      with:
+        name: surefire-test-results
+        path: target/surefire-reports/
+        retention-days: 7
