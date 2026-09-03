@@ -1,61 +1,70 @@
 package com.cicd.webapi;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import static org.junit.jupiter.api.Assertions.*;
 
-public class CalculatorTest {
-    
+class CalculatorTest {
+
+    private Calculator calculator;
+
+    @BeforeEach
+    void setUp() {
+        calculator = new Calculator();
+    }
+
     @Test
     void testAdd() {
-        Calculator calculator = new Calculator();
-        assert calculator.add(2, 3) == 5;
-        assert calculator.add(-2, -3) == -5;
+        assertEquals(5, calculator.add(2, 3));
+        assertEquals(-1, calculator.add(2, -3));
+        assertEquals(0, calculator.add(0, 0));
     }
 
-    // Additional test methods for subtract, multiply, and divide can be added here
     @Test
     void testSubtract() {
-        Calculator calculator = new Calculator();
-        assert calculator.subtract(5, 3) == 2;
-
-        assert calculator.subtract(-5, 3) == -8;
+        assertEquals(2, calculator.subtract(5, 3));
+        assertEquals(8, calculator.subtract(5, -3));
     }
 
-    // Additional test methods for multiply and divide can be added here
     @Test
     void testMultiply() {
-        Calculator calculator = new Calculator();
-        assert calculator.multiply(2, 3) == 6;
-        assert calculator.multiply(0, 3) == 0;
-        assert calculator.multiply(1, -3) == -3;
+        assertEquals(15, calculator.multiply(3, 5));
+        assertEquals(-15, calculator.multiply(3, -5));
+        assertEquals(0, calculator.multiply(0, 5));
     }
 
     @Test
     void testDivide() {
-        Calculator calculator = new Calculator();
-        assert calculator.divide(10, 2) == 5;
+        assertEquals(2.5, calculator.divide(5.0, 2.0));
+        assertEquals(-2.0, calculator.divide(6.0, -3.0));
+    }
 
+    @Test
+    void testDivideByZeroThrowsException() {
         IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
-                () -> calculator.divide(10, 0)
-            );
-
-        assert exception.getMessage().equals("Denominator cannot be zero");
+                IllegalArgumentException.class,
+                () -> calculator.divide(10.0, 0.0)
+        );
+        assertEquals("Denominator cannot be zero", exception.getMessage());
     }
 
     @Test
     void testFactorial() {
-        Calculator calculator = new Calculator();
-        assert calculator.factorial(5) == 120;
-        assert calculator.factorial(0) == 1;
-        assert calculator.factorial(1) == 1;
+        assertEquals(1.0, calculator.factorial(0));
+        assertEquals(1.0, calculator.factorial(1));
+        assertEquals(2.0, calculator.factorial(2));
+        assertEquals(6.0, calculator.factorial(3));
+        assertEquals(24.0, calculator.factorial(4));
+        assertEquals(120.0, calculator.factorial(5));
+    }
 
+    @Test
+    void testFactorialNegativeThrowsException() {
         IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
-            () -> calculator.factorial(-1)
+                IllegalArgumentException.class,
+                () -> calculator.factorial(-1)
         );
-
-        assert exception.getMessage().equals("Negative numbers are not allowed");
+        assertEquals("Negative numbers are not allowed", exception.getMessage());
     }
 }

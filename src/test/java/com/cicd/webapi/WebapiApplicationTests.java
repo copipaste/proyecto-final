@@ -11,7 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Mockito.mockStatic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -30,37 +30,68 @@ class WebapiApplicationTests {
 		String[] args = {};
 
 		try (MockedStatic<SpringApplication> mocked = mockStatic(SpringApplication.class)) {
-
 			WebapiApplication.main(args);
-
-			mocked.verify(() ->
-				SpringApplication.run(WebapiApplication.class, args)
-			);
+			mocked.verify(() -> SpringApplication.run(WebapiApplication.class, args));
 		}
 	}
 
 	@Test
 	void checkRootResponse() throws Exception {
 		mockMvc.perform(get("/")
-				.accept(MediaType.TEXT_PLAIN))
+				.accept(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
-			.andExpect(content().string("Hello CI/CD World!"));
+			.andExpect(jsonPath("$.message").value("Hello CI/CD World!"))
+			.andExpect(jsonPath("$.status").value("running"));
 	}
 
 	@Test
 	void checkHealthyResponse() throws Exception {
 		mockMvc.perform(get("/health")
-				.accept(MediaType.TEXT_PLAIN))
+				.accept(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
-			.andExpect(content().string("Server Healthy!"));
+			.andExpect(jsonPath("$.status").value("UP"))
+			.andExpect(jsonPath("$.message").value("Server Healthy!"));
 	}
 
 	@Test
 	void checkDateResponse() throws Exception {
 		mockMvc.perform(get("/date")
-				.accept(MediaType.TEXT_PLAIN))
+				.accept(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
-			.andExpect(content().string("Current Server Date: " + java.time.LocalDate.now()));
+			.andExpect(jsonPath("$.date").exists());
 	}
 
+	@Test
+	void checkInstanceResponse() throws Exception {
+		mockMvc.perform(get("/api/instance")
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.instance").exists())
+			.andExpect(jsonPath("$.port").exists())
+			.andExpect(jsonPath("$.status").value("ACTIVE"));
+	}
+
+	@Test
+	void checkInfoResponse() throws Exception {
+		mockMvc.perform(get("/api/info")
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.application").value("Diplomado CI/CD WebAPI"));
+	}
+
+	@Test
+	void checkCalcAddResponse() throws Exception {
+		mockMvc.perform(get("/api/calc/add?a=10&b=20")
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result").value(30));
+	}
+
+	@Test
+	void checkCalcMultiplyResponse() throws Exception {
+		mockMvc.perform(get("/api/calc/multiply?a=5&b=6")
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result").value(30));
+	}
 }
