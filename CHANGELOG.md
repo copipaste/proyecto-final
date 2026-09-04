@@ -6,6 +6,12 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 
 ---
 
+## [1.3.0] - 2026-09-04
+### Añadido
+- Endpoint `GET /api/calc/subtract`: expone por HTTP la resta ya existente en `Calculator`.
+
+---
+
 ## [1.2.0] - 2026-09-04
 ### Añadido
 - Endpoint `GET /api/uptime`: segundos que lleva corriendo la instancia activa.

@@ -27,7 +27,7 @@ class HelloController {
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Hello CI/CD World!");
         response.put("status", "running");
-        response.put("docs", "/api/instance, /api/info, /api/uptime, /health, /date, /api/calc/add, /api/calc/multiply");
+        response.put("docs", "/api/instance, /api/info, /api/uptime, /health, /date, /api/calc/add, /api/calc/subtract, /api/calc/multiply");
         return response;
     }
 }
@@ -118,6 +118,16 @@ class CalcController {
         response.put("a", a);
         response.put("b", b);
         response.put("result", calculator.add(a, b));
+        return response;
+    }
+
+    @GetMapping("/api/calc/subtract")
+    public Map<String, Object> subtract(@RequestParam(defaultValue = "0") int a, @RequestParam(defaultValue = "0") int b) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("operation", "subtract");
+        response.put("a", a);
+        response.put("b", b);
+        response.put("result", calculator.subtract(a, b));
         return response;
     }
 
