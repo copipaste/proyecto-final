@@ -6,6 +6,12 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 
 ---
 
+## [1.2.0] - 2026-09-04
+### Añadido
+- Endpoint `GET /api/uptime`: segundos que lleva corriendo la instancia activa.
+
+---
+
 ## [1.1.0] - 2026-09-02
 ### Añadido
 - Estrategia de despliegue **Blue-Green** con Nginx reverse proxy sin tiempo de inactividad (*Zero Downtime*).
