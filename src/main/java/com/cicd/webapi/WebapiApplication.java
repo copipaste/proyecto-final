@@ -27,7 +27,7 @@ class HelloController {
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Hello CI/CD World!");
         response.put("status", "running");
-        response.put("docs", "/api/instance, /api/info, /health, /date, /api/calc/add, /api/calc/multiply");
+        response.put("docs", "/api/instance, /api/info, /api/uptime, /health, /date, /api/calc/add, /api/calc/multiply");
         return response;
     }
 }
@@ -85,6 +85,23 @@ class InfoController {
         response.put("application", "Diplomado CI/CD WebAPI");
         response.put("java_version", System.getProperty("java.version"));
         response.put("os_name", System.getProperty("os.name"));
+        return response;
+    }
+}
+
+@RestController
+class UptimeController {
+
+    private static final long START_TIME = System.currentTimeMillis();
+
+    @Value("${INSTANCE_NAME:BLUE}")
+    private String instanceName;
+
+    @GetMapping("/api/uptime")
+    public Map<String, Object> uptime() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("instance", instanceName);
+        response.put("uptime_seconds", (System.currentTimeMillis() - START_TIME) / 1000);
         return response;
     }
 }

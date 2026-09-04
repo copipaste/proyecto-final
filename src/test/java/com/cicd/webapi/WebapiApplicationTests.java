@@ -80,6 +80,15 @@ class WebapiApplicationTests {
 	}
 
 	@Test
+	void checkUptimeResponse() throws Exception {
+		mockMvc.perform(get("/api/uptime")
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.instance").exists())
+			.andExpect(jsonPath("$.uptime_seconds").exists());
+	}
+
+	@Test
 	void checkCalcAddResponse() throws Exception {
 		mockMvc.perform(get("/api/calc/add?a=10&b=20")
 				.accept(MediaType.APPLICATION_JSON))
