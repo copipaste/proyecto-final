@@ -7,6 +7,7 @@ set -e
 
 VERSION=${1:-"v1.0.0"}
 TARGET_COLOR=$2
+REPO="copipaste/proyecto-final"
 
 # Detectar slot activo actual si no fue especificado
 if [ -z "$TARGET_COLOR" ]; then
@@ -34,16 +35,27 @@ echo "========================================================================"
 echo "🚀 [DEPLOY] Desplegando versión '${VERSION}' en Slot '${COLOR_UPPER}' (Puerto: ${PORT})"
 echo "========================================================================"
 
-# Ubicación del artefacto
-JAR_SOURCE="/vagrant/target/app.jar"
-if [ ! -f "$JAR_SOURCE" ]; then
-    if [ -f "./target/app.jar" ]; then
+# Ubicación del artefacto: primero intenta traer la versión exacta desde
+# el GitHub Release; si no hay red o esa versión no tiene Release, cae a un jar local.
+RELEASE_URL="https://github.com/${REPO}/releases/download/${VERSION}/app.jar"
+JAR_SOURCE="/tmp/app-${VERSION}.jar"
+
+echo "⬇️  Descargando '${VERSION}' desde GitHub Releases..."
+if curl -fsSL -o "$JAR_SOURCE" "$RELEASE_URL"; then
+    echo "✅ Descarga exitosa: ${RELEASE_URL}"
+else
+    echo "⚠️  No se pudo descargar de GitHub Releases (¿sin red o tag inexistente?). Buscando jar local..."
+    rm -f "$JAR_SOURCE"
+    if [ -f "/vagrant/target/app.jar" ]; then
+        JAR_SOURCE="/vagrant/target/app.jar"
+    elif [ -f "./target/app.jar" ]; then
         JAR_SOURCE="./target/app.jar"
     else
-        echo "❌ [ERROR] No se encontró el archivo JAR en '$JAR_SOURCE' ni './target/app.jar'."
-        echo "Asegúrese de ejecutar 'mvn package' previamente."
+        echo "❌ [ERROR] No se encontró el artefacto en GitHub Releases, en '/vagrant/target/app.jar' ni en './target/app.jar'."
+        echo "Asegúrese de que la Release exista o de ejecutar 'mvn package' previamente."
         exit 1
     fi
+    echo "📦 Usando jar local: ${JAR_SOURCE}"
 fi
 
 # 1. Preparar directorio y copiar artefacto
