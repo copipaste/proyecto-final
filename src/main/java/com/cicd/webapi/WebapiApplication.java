@@ -27,7 +27,7 @@ class HelloController {
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Hello CI/CD World!");
         response.put("status", "running");
-        response.put("docs", "/api/instance, /api/info, /api/uptime, /health, /date, /api/calc/add, /api/calc/subtract, /api/calc/multiply");
+        response.put("docs", "/api/instance, /api/info, /api/uptime, /health, /date, /api/calc/add, /api/calc/subtract, /api/calc/multiply, /api/calc/divide");
         return response;
     }
 }
@@ -139,5 +139,20 @@ class CalcController {
         response.put("b", b);
         response.put("result", calculator.multiply(a, b));
         return response;
+    }
+
+    @GetMapping("/api/calc/divide")
+    public ResponseEntity<Map<String, Object>> divide(@RequestParam(defaultValue = "0") double a, @RequestParam(defaultValue = "1") double b) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("operation", "divide");
+        response.put("a", a);
+        response.put("b", b);
+        try {
+            response.put("result", calculator.divide(a, b));
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            response.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
     }
 }

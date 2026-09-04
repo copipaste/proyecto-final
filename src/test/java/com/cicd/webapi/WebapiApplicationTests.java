@@ -111,4 +111,20 @@ class WebapiApplicationTests {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.result").value(30));
 	}
+
+	@Test
+	void checkCalcDivideResponse() throws Exception {
+		mockMvc.perform(get("/api/calc/divide?a=10&b=2")
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result").value(5.0));
+	}
+
+	@Test
+	void checkCalcDivideByZeroReturnsBadRequest() throws Exception {
+		mockMvc.perform(get("/api/calc/divide?a=10&b=0")
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.error").value("Denominator cannot be zero"));
+	}
 }
