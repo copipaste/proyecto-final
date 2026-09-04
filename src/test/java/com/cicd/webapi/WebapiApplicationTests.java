@@ -97,6 +97,14 @@ class WebapiApplicationTests {
 	}
 
 	@Test
+	void checkCalcSubtractResponse() throws Exception {
+		mockMvc.perform(get("/api/calc/subtract?a=10&b=4")
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.result").value(6));
+	}
+
+	@Test
 	void checkCalcMultiplyResponse() throws Exception {
 		mockMvc.perform(get("/api/calc/multiply?a=5&b=6")
 				.accept(MediaType.APPLICATION_JSON))
