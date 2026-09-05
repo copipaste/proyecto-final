@@ -6,6 +6,12 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 
 ---
 
+## [1.4.0] - 2026-09-04
+### Añadido
+- Endpoint `GET /api/calc/divide`: expone la división de `Calculator`, respondiendo `400 Bad Request` con mensaje claro si el divisor es cero (en vez de un error 500 genérico).
+
+---
+
 ## [1.3.0] - 2026-09-04
 ### Añadido
 - Endpoint `GET /api/calc/subtract`: expone por HTTP la resta ya existente en `Calculator`.
